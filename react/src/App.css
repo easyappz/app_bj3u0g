@@ -1,38 +1,39 @@
-.App {
-  text-align: center;
+/* Extra tiny tweaks beyond Tailwind */
+:root {
+  --panel-bg: rgba(17, 24, 39, 0.7);
+  --panel-border: rgba(255, 255, 255, 0.08);
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.calculator-wrap {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.btn-ghost {
+  transition: transform 120ms ease, background-color 120ms ease;
+}
+.btn-ghost:hover {
+  transform: translateY(-1px);
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.display-input::-webkit-outer-spin-button,
+.display-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
-.App-link {
-  color: #61dafb;
+/* Loading spinner override if needed */
+.spinner-xs {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.25);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
