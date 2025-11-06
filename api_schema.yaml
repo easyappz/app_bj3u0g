@@ -1,0 +1,60 @@
+openapi: 3.0.3
+info:
+  title: Calculator API
+  version: 1.0.0
+  description: Minimal safe calculator API storing only aggregated daily stats.
+servers:
+  - url: /api
+paths:
+  /calc/compute/:
+    post:
+      summary: Compute arithmetic expression
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [expression]
+              properties:
+                expression:
+                  type: string
+                  description: Arithmetic expression using digits, spaces, + - * / and parentheses.
+                  maxLength: 100
+      responses:
+        '200':
+          description: Computation successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  expression:
+                    type: string
+                  result:
+                    type: number
+        '400':
+          description: Validation or computation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /calc/stats/:
+    get:
+      summary: Get today's calculation statistics
+      responses:
+        '200':
+          description: Today's stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  date:
+                    type: string
+                    format: date
+                  today_count:
+                    type: integer

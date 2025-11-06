@@ -1,3 +1,10 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import CalcStat
+
+
+@admin.register(CalcStat)
+class CalcStatAdmin(admin.ModelAdmin):
+    list_display = ("date", "count")
+    search_fields = ("date",)
+    ordering = ("-date",)
