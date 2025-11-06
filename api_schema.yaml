@@ -3,6 +3,57 @@ info:
   title: Calculator API (frontend schema)
   version: 1.0.0
 paths:
+  /api/calc/:
+    post:
+      summary: Basic calculator operation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                a:
+                  type: number
+                b:
+                  type: number
+                op:
+                  type: string
+                  enum: [add, sub, mul, div]
+              required: [a, b, op]
+            examples:
+              add:
+                value: { a: 5, b: 7, op: add }
+              div:
+                value: { a: 12, b: 3, op: div }
+      responses:
+        '200':
+          description: Successful computation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: number
+                required: [result]
+              examples:
+                ok:
+                  value: { result: 4 }
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      error:
+                        type: string
+                    required: [error]
+                  - type: object
+                    description: DRF serializer error format
+                    additionalProperties: true
   /api/calc/compute/:
     post:
       summary: Compute arithmetic expression

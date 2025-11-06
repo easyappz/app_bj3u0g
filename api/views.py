@@ -2,7 +2,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema
-from .serializers import MessageSerializer
+from rest_framework import status
+from rest_framework.permissions import AllowAny
+from .serializers import MessageSerializer, CalculatorInputSerializer, CalculatorOutputSerializer
 
 # New imports for calculator API
 from django.http import JsonResponse
@@ -29,8 +31,51 @@ class HelloView(APIView):
         return Response(serializer.data)
 
 
+class CalcAPIView(APIView):
+    """
+    POST /api/calc/
+    Body: {"a": number, "b": number, "op": "add"|"sub"|"mul"|"div"}
+    Response: {"result": number}
+    """
+
+    permission_classes = [AllowAny]
+    authentication_classes = []  # Avoid CSRF via SessionAuthentication
+
+    @extend_schema(
+        request=CalculatorInputSerializer,
+        responses={200: CalculatorOutputSerializer},
+        description="Perform a basic arithmetic operation over two numbers",
+    )
+    def post(self, request):
+        serializer = CalculatorInputSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        a = serializer.validated_data["a"]
+        b = serializer.validated_data["b"]
+        op = serializer.validated_data["op"]
+
+        if op == "add":
+            result = a + b
+        elif op == "sub":
+            result = a - b
+        elif op == "mul":
+            result = a * b
+        elif op == "div":
+            # Division by zero is guarded in serializer; double-check for safety
+            if b == 0:
+                return Response({"b": "Division by zero"}, status=status.HTTP_400_BAD_REQUEST)
+            result = a / b
+        else:
+            # Should never happen due to ChoiceField
+            return Response({"op": "Unsupported operation"}, status=status.HTTP_400_BAD_REQUEST)
+
+        out = CalculatorOutputSerializer({"result": result})
+        return Response(out.data, status=status.HTTP_200_OK)
+
+
 # =========================
-# Calculator implementation
+# Calculator implementation (expression-based)
 # =========================
 
 AllowedChar = Union[str, float]
